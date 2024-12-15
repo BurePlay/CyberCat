@@ -1,0 +1,1 @@
+go get github.com/jackc/pgx/v4 - установка библиотеки pgx
