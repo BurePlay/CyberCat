@@ -1,5 +1,5 @@
-go get github.com/jackc/pgx/v4 - установка библиотеки pgx
+go get github.com/jackc/pgx/v5 - установка библиотеки pgx
 
 import (
-       "github.com/jackc/pgx/v4" // для добавления pgx
+       "github.com/jackc/pgx/v5" // для добавления pgx
    )
