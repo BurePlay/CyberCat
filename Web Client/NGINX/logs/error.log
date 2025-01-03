@@ -1,0 +1,20 @@
+2025/01/03 14:28:37 [error] 388#14116: *1 CreateFile() "D:\nginx-1.27.3/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"
+2025/01/03 15:02:47 [notice] 13060#18972: signal process started
+2025/01/03 15:02:52 [error] 19912#18124: *3 directory index of "D:\project\pages/" is forbidden, client: 127.0.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8080"
+2025/01/03 15:02:52 [error] 19912#18124: *3 CreateFile() "D:\project\pages/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: , request: "GET /favicon.ico HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/"
+2025/01/03 15:02:53 [error] 19912#18124: *3 directory index of "D:\project\pages/" is forbidden, client: 127.0.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8080"
+2025/01/03 15:02:54 [error] 19912#18124: *3 directory index of "D:\project\pages/" is forbidden, client: 127.0.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8080"
+2025/01/03 15:03:18 [notice] 18892#2172: signal process started
+2025/01/03 15:05:47 [notice] 7832#17680: signal process started
+2025/01/03 15:11:29 [notice] 13060#16428: signal process started
+2025/01/03 15:11:31 [error] 18548#20440: *6 "D:\project\pages/index.html" is not found (3: The system cannot find the path specified), client: 127.0.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8080"
+2025/01/03 15:12:22 [notice] 3688#19132: signal process started
+2025/01/03 15:13:16 [error] 18264#1520: *7 CreateFile() "D:/project/site/login/register.html" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: , request: "GET /login/register.html HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/login/"
+2025/01/03 15:13:19 [notice] 10872#18592: signal process started
+2025/01/03 15:13:21 [error] 20260#20056: *8 CreateFile() "D:/project/site/login/register.html" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: , request: "GET /login/register.html HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/login/"
+2025/01/03 15:13:22 [error] 20260#20056: *8 CreateFile() "D:/project/site/login/register.html" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: , request: "GET /login/register.html HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/login/"
+2025/01/03 15:13:25 [error] 20260#20056: *8 CreateFile() "D:/project/site/login/register.html" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: , request: "GET /login/register.html HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/login/"
+2025/01/03 15:13:35 [error] 20260#20056: *8 CreateFile() "D:/project/site/login/register.html" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: , request: "GET /login/register.html HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/login/"
+2025/01/03 15:13:45 [notice] 4028#11868: signal process started
+2025/01/03 15:13:46 [error] 20436#6668: *9 CreateFile() "D:/project/site/login/register.html" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: , request: "GET /login/register.html HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/login/"
+2025/01/03 15:14:51 [notice] 18820#19788: signal process started
