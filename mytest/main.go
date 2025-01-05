@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// Укажите свои параметры подключения к базе данных
-	connStr := "user=postgres password=1 dbname=tests sslmode=disable"
+	connStr := "user=postgres password=1 dbname=tests sslmode=disable"     //dbname-название бд 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
@@ -42,7 +42,7 @@ func main() {
 	praviln_otvet = strings.TrimSpace(praviln_otvet)
 
 	// Подготовка SQL запроса на вставку данных
-	insertQuery := `INSERT INTO test1 (question, variant_otveta, praviln_otvet) VALUES ($1, $2, $3)`
+	insertQuery := `INSERT INTO test1 (question, variant_otveta, praviln_otvet) VALUES ($1, $2, $3)`    //здесь сначала заполняется имя теста (test1), потом название столбцов
 
 	// Выполнение запроса для вставки данных
 	_, err = db.Exec(insertQuery, question, variant_otveta, praviln_otvet)
