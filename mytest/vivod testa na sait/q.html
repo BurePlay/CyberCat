@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вопросы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 40px;
+        }
+        .question {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 30px 0;
+        }
+        .question h3 {
+            font-size: 22px;
+            margin: 0 0 15px 0;
+            color: #4a90e2;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #357ab8;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Вопросы с вариантами ответов</h1>
+        <div id="quizContainer"></div>
+        <div class="footer">
+            <button onclick="redirectToResults()" class="btn">Перейти к результатам</button>
+        </div>
+    </div>
+
+    <script>
+        const userAnswers = [];
+
+        async function fetchQuestions() {
+            const response = await fetch('/questions');
+            const questions = await response.json();
+            displayQuestions(questions);
+        }
+
+        function displayQuestions(questions) {
+            const questionsContainer = document.getElementById('quizContainer');
+            questionsContainer.innerHTML = '';
+
+            questions.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question';
+
+                const questionText = document.createElement('h3');
+                questionText.textContent = question.question;
+                questionElement.appendChild(questionText);
+
+                const variants = question.variants.split('*$*#*');
+
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options';
+
+                variants.forEach((variant, variantIndex) => {
+                    const label = document.createElement('label');
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question-${index}`; // Одно имя для группы радиокнопок
+                    radio.value = variantIndex; // Значение индекса варианта
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(variant));
+                    optionsContainer.appendChild(label);
+                });
+
+                questionElement.appendChild(optionsContainer);
+                questionsContainer.appendChild(questionElement);
+            });
+        }
+
+        function redirectToResults() {
+            const questions = document.querySelectorAll('.question');
+            questions.forEach((questionElement, index) => {
+                const selectedOption = questionElement.querySelector(`input[name="question-${index}"]:checked`);
+                userAnswers[index] = selectedOption ? parseInt(selectedOption.value) : null; // Сохраняем ответ или null, если не выбран
+            });
+
+            const answersURL = `r.html?answers=${JSON.stringify(userAnswers)}`;
+            window.location.href = answersURL;
+        }
+
+        window.onload = fetchQuestions;
+    </script>
+</body>
+</html>

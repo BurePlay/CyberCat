@@ -1,0 +1,95 @@
+
+Чтобыhtml
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .correct {
+            border-color: #4CAF50;
+            background-color: #e8f5e9;
+        }
+        .incorrect {
+            border-color: #f44336;
+            background-color: #ffebee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Результаты</h1>
+        <div id="resultsContainer"></div>
+        <div class="footer">
+            <a href="q.html" class="btn">Вернуться к вопросам</a>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userAnswers = JSON.parse(urlParams.get('answers'));
+        const correctAnswers = [1, 2, 0, 1, 2]; // Пример правильных ответов (индексы, соответствующие правильным ответам)
+
+        const resultsContainer = document.getElementById('resultsContainer');
+        let score = 0;
+
+        // Отображаем список выбранных ответов и проверка правильности
+        userAnswers.forEach((answer, index) => {
+            const resultElement = document.createElement('div');
+            resultElement.className = 'result';
+
+            if (answer !== null) {
+                resultElement.textContent = `Вопрос ${index + 1}: Ваш ответ - ${answer + 1}`;
+                if (answer === correctAnswers[index]) {
+                    resultElement.classList.add('correct');
+                    score++;
+                } else {
+                    resultElement.classList.add('incorrect');
+                    resultElement.textContent += ` (Правильный ответ - ${correctAnswers[index] + 1})`;
+                }
+            } else {
+                resultElement.textContent = `Вопрос ${index + 1}: Ваш ответ - не выбран`;
+            }
+
+            resultsContainer.appendChild(resultElement);
+        });
+
+        // Выводим количество верных ответов
+        const scoreElement = document.createElement('div');
+        scoreElement.textContent = `Вы набрали ${score} из ${userAnswers.length} правильных ответов.`;
+        resultsContainer.appendChild(scoreElement);
+    </script>
+</body>
+</html>
