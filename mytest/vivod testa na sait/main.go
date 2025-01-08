@@ -29,7 +29,7 @@ func main() {
 	log.Println("Успешно подключено к базе данных!")
 
 	http.HandleFunc("/questions", func(w http.ResponseWriter, r *http.Request) {
-		rows, err := db.Query("SELECT question, variant_otveta FROM test1")
+		rows, err := db.Query("SELECT question, variant_otveta FROM test2")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -61,6 +61,6 @@ func main() {
 	// Обслуживание статических файлов
 	http.Handle("/", http.FileServer(http.Dir("."))) // Убедитесь, что вы находите се в том же каталоге, что и q.html
 
-	log.Println("Сервер запускает на http://localhost:8082")
-	log.Fatal(http.ListenAndServe(":8082", nil))
+	log.Println("Сервер запускает на http://localhost:8084")
+	log.Fatal(http.ListenAndServe(":8084", nil))
 }
