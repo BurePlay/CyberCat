@@ -1,5 +1,3 @@
-//с помощью этого кода можно вводить информацию в таблицу
-
 package main
 
 import (
@@ -8,50 +6,99 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
+	"time"
 
-	_ "github.com/lib/pq" // Импортируем драйвер PostgreSQL
+	_ "github.com/lib/pq" // драйвер PostgreSQL
 )
 
+type Test struct {
+	Question      string
+	VariantOtveta string
+	PravilnOtveta string
+}
+
+// Функция для создания таблицы с уникальным именем
+func createTable(db *sql.DB, tableName string) error {
+	createTableSQL := fmt.Sprintf(`
+    CREATE TABLE IF NOT EXISTS %s (
+        number SERIAL PRIMARY KEY,
+        question TEXT NOT NULL,
+        variant_otveta TEXT NOT NULL,
+        praviln_otvet TEXT NOT NULL
+    );`, tableName)
+
+	_, err := db.Exec(createTableSQL)
+	if err != nil {
+		return fmt.Errorf("ошибка при создании таблицы %s: %v", tableName, err)
+	}
+
+	fmt.Printf("Таблица %s успешно создана\n", tableName)
+	return nil
+}
+
+// Функция для вставки нового теста в таблицу
+func insertTest(db *sql.DB, tableName string, test Test) error {
+	insertSQL := fmt.Sprintf(`
+    INSERT INTO %s (question, variant_otveta, praviln_otvet)
+    VALUES ($1, $2, $3) RETURNING number;`, tableName)
+
+	var id int
+	err := db.QueryRow(insertSQL, test.Question, test.VariantOtveta, test.PravilnOtveta).Scan(&id)
+	if err != nil {
+		return fmt.Errorf("ошибка при вставке теста в таблицу %s: %v", tableName, err)
+	}
+	fmt.Printf("Тест добавлен в таблицу %s с ID: %d\n", tableName, id)
+	return nil
+}
+
+// Функция для чтения ввода от пользователя
+func readInput(prompt string) string {
+	fmt.Print(prompt)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	return scanner.Text()
+}
+
+// Функция для получения уникального имени таблицы
+func generateUniqueTableName() string {
+	currentTime := time.Now()
+	return fmt.Sprintf("tests_%s", currentTime.Format("20060102150405")) // Формат YYYYMMDDHHMMSS
+}
+
 func main() {
-	// Укажите свои параметры подключения к базе данных
-	connStr := "user=postgres password=1 dbname=tests sslmode=disable"     //dbname-название бд 
+	// Строка подключения к базе данных
+	connStr := "user=postgres password=1 dbname=tests sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Ошибка подключения к базе данных:", err)
 	}
 	defer db.Close()
 
-	// Проверка подключения
-	err = db.Ping()
-	if err != nil {
+	// Генерируем уникальное имя для таблицы
+	tableName := generateUniqueTableName()
+
+	// Создаем таблицу с уникальным именем
+	if err := createTable(db, tableName); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Успешно подключено к базе данных!")
 
-	// Ввод данных от пользователя
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Введите вопрос: ")
-	question, _ := reader.ReadString('\n')
-	question = strings.TrimSpace(question) // Удаляем лишние пробелы и символы новой строки
+	// Бесконечный цикл для ввода тестов
+	for {
+		question := readInput("Введите вопрос (или введите 'exit' для выхода): ")
+		if question == "exit" {
+			break
+		}
+		variantOtveta := readInput("Введите варианты ответа, разделенные запятыми: ")
+		pravilnOtveta := readInput("Введите правильный ответ: ")
 
-	fmt.Print("Введите варианты ответа: ")
-	variant_otveta, _ := reader.ReadString('\n')
-	variant_otveta = strings.TrimSpace(variant_otveta)
+		test := Test{
+			Question:      question,
+			VariantOtveta: variantOtveta,
+			PravilnOtveta: pravilnOtveta,
+		}
 
-	fmt.Print("Введите правильный ответ: ")
-	praviln_otvet, _ := reader.ReadString('\n')
-	praviln_otvet = strings.TrimSpace(praviln_otvet)
-
-	// Подготовка SQL запроса на вставку данных
-	insertQuery := `INSERT INTO test1 (question, variant_otveta, praviln_otvet) VALUES ($1, $2, $3)`    //здесь сначала заполняется имя теста (test1), потом название столбцов
-
-	// Выполнение запроса для вставки данных
-	_, err = db.Exec(insertQuery, question, variant_otveta, praviln_otvet)
-	if err != nil {
-		log.Fatalf("Ошибка вставки данных: %v", err) // Выводим ошибку, если она произошла
+		if err := insertTest(db, tableName, test); err != nil {
+			log.Fatal(err)
+		}
 	}
-
-	// Успешное сообщение
-	fmt.Println("Данные успешно вставлены!")
 }
