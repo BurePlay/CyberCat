@@ -6,18 +6,18 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
+	"strings"
 
 	_ "github.com/lib/pq" // драйвер PostgreSQL
 )
 
 type Test struct {
 	Question      string
-	VariantOtveta string
+	VariantOtveta string // Для хранения вариантов как строки
 	PravilnOtveta string
 }
 
-// Функция для создания таблицы с уникальным именем
+// Функция для создания таблицы с заданным именем
 func createTable(db *sql.DB, tableName string) error {
 	createTableSQL := fmt.Sprintf(`
     CREATE TABLE IF NOT EXISTS %s (
@@ -59,12 +59,6 @@ func readInput(prompt string) string {
 	return scanner.Text()
 }
 
-// Функция для получения уникального имени таблицы
-func generateUniqueTableName() string {
-	currentTime := time.Now()
-	return fmt.Sprintf("tests_%s", currentTime.Format("20060102150405")) // Формат YYYYMMDDHHMMSS
-}
-
 func main() {
 	// Строка подключения к базе данных
 	connStr := "user=postgres password=1 dbname=tests sslmode=disable"
@@ -74,10 +68,10 @@ func main() {
 	}
 	defer db.Close()
 
-	// Генерируем уникальное имя для таблицы
-	tableName := generateUniqueTableName()
+	// Ввод имени таблицы пользователем
+	tableName := readInput("Введите имя для таблицы: ")
 
-	// Создаем таблицу с уникальным именем
+	// Создаем таблицу с заданным именем
 	if err := createTable(db, tableName); err != nil {
 		log.Fatal(err)
 	}
@@ -88,12 +82,16 @@ func main() {
 		if question == "exit" {
 			break
 		}
-		variantOtveta := readInput("Введите варианты ответа, разделенные запятыми: ")
+
+		variantOtveta := readInput("Введите варианты ответа, разделенные запятой: ")
+		// Заменяем запятые на специальный набор символов
+		variantOtvetaWithDelimiter := strings.ReplaceAll(variantOtveta, ",", " *$*#* ")
+
 		pravilnOtveta := readInput("Введите правильный ответ: ")
 
 		test := Test{
 			Question:      question,
-			VariantOtveta: variantOtveta,
+			VariantOtveta: variantOtvetaWithDelimiter, // Сохраняем вариант с разделителем
 			PravilnOtveta: pravilnOtveta,
 		}
 
