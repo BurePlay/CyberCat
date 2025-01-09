@@ -147,8 +147,8 @@
         </form>
         <div class="social-login">
             <p>Или зарегистрироваться с помощью:</p>
-            <a class="social-btn" href="https://oauth.yandex.ru/" target="_blank">Яндекс</a>
-            <a class="social-btn" href="https://github.com/login" target="_blank">GitHub</a>
+            <a href="/yandex/login" class="btn">Войти через Яндекс</a>
+            <a href="{{ url_for('github.login') }}" class="btn">Войти через GitHub</a>
         </div>
         <div class="footer">
             <p>Есть аккаунт? <a href="/login" target="_blank">Войти</a></p>
