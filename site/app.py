@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mail import Mail, Message
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
@@ -17,22 +17,31 @@ YANDEX_CLIENT_ID = "901bd33153ea435aab6d42127308774f"
 YANDEX_CLIENT_SECRET = "6d43c53523914b4597dae838f0dd9d67"
 YANDEX_REDIRECT_URI = "https://2258-93-171-156-92.ngrok-free.app/yandex/authorized"
 
+
+
+
+#Конфигурация OAuth для Github
+CLIENT_ID = 'Ov23liJWBycxpJ2V6ew4'
+CLIENT_SECRET = '414ad6ab67139294375ff8256b49e6b3936316dd'
+GITHUB_REDIRECT_URI = 'http://localhost:5000/github/callback'
+
+# GitHub OAuth endpoints
+AUTHORIZATION_BASE_URL = 'https://github.com/login/oauth/authorize'
+TOKEN_URL = 'https://github.com/login/oauth/access_token'
+API_BASE_URL = 'https://api.github.com/'
+
+
+
 # Создаем сессию OAuth для Яндекса
 oauth = OAuth2Session(YANDEX_CLIENT_ID, redirect_uri=YANDEX_REDIRECT_URI)
+
+# Создаем сессию OAuth для Github
+oauth_github = OAuth2Session(CLIENT_ID, redirect_uri=GITHUB_REDIRECT_URI)
 
 # Получаем URL для авторизации
 authorization_url, state = oauth.authorization_url('https://oauth.yandex.ru/authorize')
 print(f"Перейдите по следующему URL для авторизации: {authorization_url}")
 
-# Создаем blueprint для GitHub
-github_blueprint = make_github_blueprint(
-    client_id="Ov23liJkzqD5GIAouD68",
-    client_secret="907a2c2067944aedfbc45485aa97cec44a80d249",
-    scope="user:email"
-)
-
-# Регистрируем blueprint
-app.register_blueprint(github_blueprint, url_prefix="/github")
 
 # Подключение к MongoDB
 uri = "mongodb+srv://BurePlay:123@users.tgbfe.mongodb.net/"
@@ -130,13 +139,13 @@ def login():
         user = collection.find_one({"email": email})
         if user:
             if not user.get("confirmed", False):
-                return "Подтвердите вашу почту перед входом."
+                return render_template('Login.html', message = "Подтвердите вашу почту перед входом.")
             if user['password'] == hashed_password:
                 return redirect(url_for('quiz'))
             else:
-                return "Неправильный пароль. Попробуйте снова."
+                return render_template('Login.html', error = "Неправильный пароль. Попробуйте снова.")
         else:
-            return "Пользователь с такой почтой не зарегистрирован."
+            return render_template('Login.html', error = "Пользователь с такой почтой не зарегистрирован.")
     return render_template('Login.html')
 
 # Маршрут для страницы с тестом
@@ -205,35 +214,54 @@ def yandex_authorized():
     return "Ошибка авторизации через Яндекс"
 
 # OAuth для GitHub
-@app.route('/github/authorized')
-def github_authorized():
-    if not github.authorized:
-        return redirect(url_for("github.login"))  # Перенаправляем на страницу авторизации GitHub
+@app.route('/github/login')
+def github_login():
+    #Initiates the OAuth login process by redirecting to GitHub
+    authorization_url, state = oauth_github.authorization_url(AUTHORIZATION_BASE_URL)
+    session['oauth_state'] = state
+    return redirect(authorization_url)
 
-    resp = github.get("/user")
+
+
+@app.route('/github/callback')
+def github_callback():
+    #GitHub will redirect here after the user logs in
+    oauth_github.fetch_token(TOKEN_URL, client_secret=CLIENT_SECRET, authorization_response=request.url)
+    resp = oauth_github.get(API_BASE_URL + 'user')  # Fetch user info from GitHub
+
+    
     if resp.ok:
         user_info = resp.json()
         email = user_info.get("email")
         nickname = user_info.get("login")
 
+        print(user_info)
+
+
+        # Хз как почту достать пока-что
+        '''
         if email is None:
             emails = github.get("/user/emails").json()
             email = next((e['email'] for e in emails if e['primary'] and e['verified']), None)
 
         if not email:
             return "Не удалось получить email пользователя с GitHub."
+        '''
 
         user = collection.find_one({"email": email})
         if not user:
             collection.insert_one({
                 "nickname": nickname,
-                "email": email,
+                #"email": email,
                 "confirmed": True
             })
 
         return redirect(url_for('quiz'))
 
     return "Ошибка авторизации через GitHub."
+
+    #return f'Hello, {user_info["login"]}!<br>Your GitHub email: {user_info.get("email", "No email found")}.'
+
 
 # Запуск приложения
 if __name__ == '__main__':
