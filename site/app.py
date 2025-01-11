@@ -36,7 +36,11 @@ API_BASE_URL = 'https://api.github.com/'
 oauth = OAuth2Session(YANDEX_CLIENT_ID, redirect_uri=YANDEX_REDIRECT_URI)
 
 # Создаем сессию OAuth для Github
-oauth_github = OAuth2Session(CLIENT_ID, redirect_uri=GITHUB_REDIRECT_URI)
+oauth_github = OAuth2Session(
+    CLIENT_ID,
+    redirect_uri=GITHUB_REDIRECT_URI,
+    scope="read:user,user:email"
+)
 
 # Получаем URL для авторизации
 authorization_url, state = oauth.authorization_url('https://oauth.yandex.ru/authorize')
@@ -232,27 +236,34 @@ def github_callback():
     
     if resp.ok:
         user_info = resp.json()
-        email = user_info.get("email")
+        email = user_info.get("email") # Primary email, if public
         nickname = user_info.get("login")
-
         print(user_info)
 
+        # If no email is available in the basic info, fetch emails explicitly
+        if not email:
+            email_resp = oauth_github.get(API_BASE_URL + 'user/emails')
+            if email_resp.ok:
+                emails = email_resp.json()  # List of email objects
+                primary_email = next(
+                    (e['email'] for e in emails if e.get('primary') and e.get('verified')),
+                    None
+                )
+                email = primary_email
 
-        # Хз как почту достать пока-что
-        '''
-        if email is None:
-            emails = github.get("/user/emails").json()
-            email = next((e['email'] for e in emails if e['primary'] and e['verified']), None)
 
         if not email:
             return "Не удалось получить email пользователя с GitHub."
-        '''
+
+        print(f"User info: {user_info}")
+        print(f"Email: {email}")
+
 
         user = collection.find_one({"email": email})
         if not user:
             collection.insert_one({
                 "nickname": nickname,
-                #"email": email,
+                "email": email,
                 "confirmed": True
             })
 
