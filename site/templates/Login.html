@@ -5,10 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход в систему</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .message-box {
+            font-size: 14px;
+            background-color: #4e64c2;
+            color: white;
+            padding: 8px;
+            width: 90%;
+            position: relative;
+        }
+
+        .error-box {
+            font-size: 14px;
+            background-color: #c24e58;
+            color: white;
+            padding: 8px;
+            width: 90%px;
+            position: relative;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        
         <div class="login-box">
+            {% if message %}
+            <div class="message-box">
+                {{ message }}
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="error-box">
+                {{ error }}
+            </div>
+            {% endif %}
             <h1>Вход</h1>
             <form action="/login" method="POST">
                 <div class="textbox">
