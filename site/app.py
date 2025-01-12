@@ -15,15 +15,15 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 # Конфигурация OAuth для Яндекс
 YANDEX_CLIENT_ID = "901bd33153ea435aab6d42127308774f"
 YANDEX_CLIENT_SECRET = "6d43c53523914b4597dae838f0dd9d67"
-YANDEX_REDIRECT_URI = "https://2258-93-171-156-92.ngrok-free.app/yandex/authorized"
+YANDEX_REDIRECT_URI = "https://4f94-93-171-155-27.ngrok-free.app/yandex/authorized"
 
 
 
 
 #Конфигурация OAuth для Github
-CLIENT_ID = 'Ov23liJWBycxpJ2V6ew4'
-CLIENT_SECRET = '414ad6ab67139294375ff8256b49e6b3936316dd'
-GITHUB_REDIRECT_URI = 'http://localhost:5000/github/callback'
+CLIENT_ID = 'Ov23liJkzqD5GIAouD68' 
+CLIENT_SECRET = '907a2c2067944aedfbc45485aa97cec44a80d249'
+GITHUB_REDIRECT_URI = 'https://4f94-93-171-155-27.ngrok-free.app/github/callback'
 
 # GitHub OAuth endpoints
 AUTHORIZATION_BASE_URL = 'https://github.com/login/oauth/authorize'
