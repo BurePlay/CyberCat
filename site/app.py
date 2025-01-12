@@ -144,7 +144,7 @@ def login():
             if not user.get("confirmed", False):
                 return render_template('Login.html', message = "Подтвердите вашу почту перед входом.")
             if user['password'] == hashed_password:
-                return redirect(url_for('quiz'))
+                return redirect(url_for('main_page'))
             else:
                 return render_template('Login.html', error = "Неправильный пароль. Попробуйте снова.")
         else:
@@ -184,7 +184,7 @@ def yandex_login():
                 "confirmed": True
             })
         # Перенаправление на страницу quiz
-        return redirect(url_for('quiz'))
+        return redirect(url_for('main_page'))
     return "Ошибка авторизации через Яндекс"
 
 # Обработка перенаправления от Яндекса после авторизации
@@ -215,7 +215,7 @@ def yandex_authorized():
             })
 
         # Перенаправление на страницу quiz
-        return redirect(url_for('quiz'))
+        return redirect(url_for('main_page'))
 
     # Если произошла ошибка
     return "Ошибка авторизации через Яндекс"
@@ -270,7 +270,7 @@ def github_callback():
                 "confirmed": True
             })
 
-        return redirect(url_for('quiz'))
+        return redirect(url_for('main_page'))
 
     return "Ошибка авторизации через GitHub."
 
@@ -290,13 +290,14 @@ def main_page():
     test_list = [
         Test(
             name="Test1",
-            link="/test/1"
+            link="http://localhost:8086/templates/q.html"
         ),
 
         Test(
             name="Test2",
             link="/test/2"
         ),
+
     ]
 
     return render_template("main.html",test_list=test_list)
