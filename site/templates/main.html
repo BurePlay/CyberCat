@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #cccccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            
+        }
+
+        .container {
+            background-color: #fafafa;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            text-align: center;
+        }
+
+        .test_box {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            text-align: center;
+            margin-bottom: 10px;
+            display: inline-block;
+            font-size: 20px;
+        }
+
+        ul.test {
+            align-items: center;
+            text-align: center;
+            list-style: none;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1em;
+            color: #333;
+        }
+        h3 {
+            text-align: center;
+            margin-bottom: 4px;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 1em;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: #666;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        .btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 0.7em;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 50%;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #357ab8;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 1em;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        .message-box {
+            font-size: 14px;
+            background-color: #4e64c2;
+            color: white;
+            padding: 8px;
+            width: 90%;
+
+        }
+
+        .error-box {
+            font-size: 14px;
+            background-color: #c24e58;
+            color: white;
+            padding: 8px;
+            width: 90%;
+
+        }
+
+        .social-btn {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .social-btn:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+    <h1>Добро пожаловать! Выберите тест<h1>
+    <h2>Доступные тесты:<h3>
+        <ul class="test">
+            {% for test in test_list %}
+            <li>
+                <div class="test_box">
+                    <h3>{{ test.name }}<h3>
+                    
+                    <a href="{{ test.link }}">
+                        <button class="btn">Перейти</button>
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+            
+        </ul>
+    </div>
+</body>
+
+</html>
