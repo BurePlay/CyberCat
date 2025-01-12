@@ -162,30 +162,8 @@ def yandex_login():
     # Проверяем, авторизован ли пользователь через Яндекс
     authorization_url, state = oauth.authorization_url('https://oauth.yandex.ru/authorize')
 
+    return redirect(authorization_url)  # Перенаправляем на страницу авторизации
 
-
-    if not oauth.authorized:
-        return redirect(authorization_url)  # Перенаправляем на страницу авторизации
-
-    # Получаем информацию о пользователе
-    oauth.fetch_token('https://oauth.yandex.ru/token', client_secret=YANDEX_CLIENT_SECRET, authorization_response=request.url)
-    response = oauth.get('https://login.yandex.ru/info')
-    if response.ok:
-        user_info = response.json()
-        email = user_info.get("default_email")
-        nickname = user_info.get("real_name") or email.split('@')[0]
-
-        # Сразу подтверждаем email
-        user = collection.find_one({"email": email})
-        if not user:
-            collection.insert_one({
-                "nickname": nickname,
-                "email": email,
-                "confirmed": True
-            })
-        # Перенаправление на страницу quiz
-        return redirect(url_for('main_page'))
-    return "Ошибка авторизации через Яндекс"
 
 # Обработка перенаправления от Яндекса после авторизации
 @app.route('/yandex/authorized')
