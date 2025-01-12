@@ -61,6 +61,6 @@ func main() {
 	// Обслуживание статических файлов
 	http.Handle("/", http.FileServer(http.Dir("."))) // Убедитесь, что вы находите се в том же каталоге, что и q.html
 
-	log.Println("Сервер запускает на http://localhost:8084")
-	log.Fatal(http.ListenAndServe(":8084", nil))
+	log.Println("Сервер запускает на http://localhost:8086")
+	log.Fatal(http.ListenAndServe(":8086", nil))
 }
