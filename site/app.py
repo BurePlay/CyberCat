@@ -15,15 +15,15 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 # Конфигурация OAuth для Яндекс
 YANDEX_CLIENT_ID = "901bd33153ea435aab6d42127308774f"
 YANDEX_CLIENT_SECRET = "6d43c53523914b4597dae838f0dd9d67"
-YANDEX_REDIRECT_URI = "https://4f94-93-171-155-27.ngrok-free.app/yandex/authorized"
+YANDEX_REDIRECT_URI = "https://2258-93-171-156-92.ngrok-free.app/yandex/authorized"
 
 
 
 
 #Конфигурация OAuth для Github
-CLIENT_ID = 'Ov23liJkzqD5GIAouD68' 
-CLIENT_SECRET = '907a2c2067944aedfbc45485aa97cec44a80d249'
-GITHUB_REDIRECT_URI = 'https://4f94-93-171-155-27.ngrok-free.app/github/callback'
+CLIENT_ID = 'Ov23liJWBycxpJ2V6ew4'
+CLIENT_SECRET = '414ad6ab67139294375ff8256b49e6b3936316dd'
+GITHUB_REDIRECT_URI = 'http://localhost:5000/github/callback'
 
 # GitHub OAuth endpoints
 AUTHORIZATION_BASE_URL = 'https://github.com/login/oauth/authorize'
@@ -41,9 +41,6 @@ oauth_github = OAuth2Session(
     redirect_uri=GITHUB_REDIRECT_URI,
     scope="read:user,user:email"
 )
-
-# Получаем URL для авторизации
-
 
 
 
@@ -75,6 +72,8 @@ except Exception as e:
 @app.route('/')
 def home():
     return render_template('home.html')
+
+
 
 # Маршрут для регистрации
 @app.route('/register', methods=['GET', 'POST'])
@@ -145,7 +144,7 @@ def login():
             if not user.get("confirmed", False):
                 return render_template('Login.html', message = "Подтвердите вашу почту перед входом.")
             if user['password'] == hashed_password:
-                return redirect(url_for('q'))
+                return redirect(url_for('quiz'))
             else:
                 return render_template('Login.html', error = "Неправильный пароль. Попробуйте снова.")
         else:
@@ -153,15 +152,18 @@ def login():
     return render_template('Login.html')
 
 # Маршрут для страницы с тестом
-@app.route('/q')
-def q():
-    return render_template('q.html')
+@app.route('/quiz')
+def quiz():
+    return render_template('quiz.html')
 
 # OAuth для Яндекса
 @app.route('/yandex/login')
 def yandex_login():
-    authorization_url, state = oauth.authorization_url('https://oauth.yandex.ru/authorize')
     # Проверяем, авторизован ли пользователь через Яндекс
+    authorization_url, state = oauth.authorization_url('https://oauth.yandex.ru/authorize')
+
+
+
     if not oauth.authorized:
         return redirect(authorization_url)  # Перенаправляем на страницу авторизации
 
@@ -181,8 +183,8 @@ def yandex_login():
                 "email": email,
                 "confirmed": True
             })
-        # Перенаправление на страницу q
-        return redirect(url_for('q'))
+        # Перенаправление на страницу quiz
+        return redirect(url_for('quiz'))
     return "Ошибка авторизации через Яндекс"
 
 # Обработка перенаправления от Яндекса после авторизации
@@ -212,8 +214,8 @@ def yandex_authorized():
                 "confirmed": True
             })
 
-        # Перенаправление на страницу q
-        return redirect(url_for('q'))
+        # Перенаправление на страницу quiz
+        return redirect(url_for('quiz'))
 
     # Если произошла ошибка
     return "Ошибка авторизации через Яндекс"
@@ -268,12 +270,36 @@ def github_callback():
                 "confirmed": True
             })
 
-        return redirect(url_for('q'))
+        return redirect(url_for('quiz'))
 
     return "Ошибка авторизации через GitHub."
 
     #return f'Hello, {user_info["login"]}!<br>Your GitHub email: {user_info.get("email", "No email found")}.'
 
+
+class Test():
+    def __init__(self, name, link):
+        self.name = name
+        self.link = link
+
+
+
+@app.route('/main')
+def main_page():
+
+    test_list = [
+        Test(
+            name="Test1",
+            link="/test/1"
+        ),
+
+        Test(
+            name="Test2",
+            link="/test/2"
+        ),
+    ]
+
+    return render_template("main.html",test_list=test_list)
 
 # Запуск приложения
 if __name__ == '__main__':
